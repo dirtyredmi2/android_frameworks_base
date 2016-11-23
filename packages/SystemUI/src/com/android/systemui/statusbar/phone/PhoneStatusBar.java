@@ -113,6 +113,7 @@ import com.android.keyguard.KeyguardUpdateMonitorCallback;
 import com.android.keyguard.ViewMediatorCallback;
 import com.android.systemui.AutoReinflateContainer;
 import com.android.systemui.AutoReinflateContainer.InflateListener;
+import com.android.systemui.BatteryLevelTextView;
 import com.android.systemui.BatteryMeterView;
 import com.android.systemui.DemoMode;
 import com.android.systemui.EventLogConstants;
@@ -354,6 +355,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     // DT2L camera vibration config
     private int mDt2lCameraVibrateConfig;
 
+    private int mQsLayoutColumns;
+
     // settings
     private QSPanel mQSPanel;
 
@@ -464,27 +467,21 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
            resolver.registerContentObserver(Settings.System.getUriFor(
                   Settings.System.SHOW_LTE_FOURGEE),
                   false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.Secure.getUriFor(
-                   Settings.Secure.QS_ROWS_PORTRAIT),
-                   false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.Secure.getUriFor(
-                   Settings.Secure.QS_ROWS_LANDSCAPE),
-                   false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.Secure.getUriFor(
-                   Settings.Secure.QS_COLUMNS),
-                   false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                   Settings.System.DT2L_CAMERA_VIBRATE_CONFIG),
-                   false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_DU_LOGO),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                   Settings.System.STATUS_BAR_SHOW_CARRIER),
-                   false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.Secure.getUriFor(
-                    Settings.Secure.LOCK_QS_DISABLED),
-                    false, this, UserHandle.USER_ALL);
+           resolver.registerContentObserver(Settings.System.getUriFor(
+                  Settings.System.DT2L_CAMERA_VIBRATE_CONFIG),
+                  false, this, UserHandle.USER_ALL);
+           resolver.registerContentObserver(Settings.System.getUriFor(
+                  Settings.System.STATUS_BAR_DU_LOGO),
+                  false, this, UserHandle.USER_ALL);
+           resolver.registerContentObserver(Settings.System.getUriFor(
+                  Settings.System.STATUS_BAR_SHOW_CARRIER),
+                  false, this, UserHandle.USER_ALL);
+           resolver.registerContentObserver(Settings.Secure.getUriFor(
+                  Settings.Secure.LOCK_QS_DISABLED),
+                  false, this, UserHandle.USER_ALL);
+           resolver.registerContentObserver(Settings.System.getUriFor(
+                  Settings.System.QS_LAYOUT_COLUMNS),
+                  false, this, UserHandle.USER_ALL);
            updateSettings();
         }
 
@@ -497,14 +494,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                             Settings.System.SHOW_LTE_FOURGEE,
                             0, UserHandle.USER_CURRENT) == 1;
                     mNetworkController.onConfigurationChanged();
-            } else if (uri.equals(Settings.Secure.getUriFor(
-                    Settings.Secure.QS_ROWS_PORTRAIT))
-                    || uri.equals(Settings.Secure.getUriFor(
-                    Settings.Secure.QS_ROWS_LANDSCAPE))) {
-                    updateResources();
-            } else if (uri.equals(Settings.Secure.getUriFor(
-                    Settings.Secure.QS_COLUMNS))) {
-                    updateResources();
             } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_SHOW_CARRIER))) {
                     updateSettings();
@@ -528,8 +517,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mShowCarrierLabel = Settings.System.getIntForUser(resolver,
                     Settings.System.STATUS_BAR_SHOW_CARRIER, 1, UserHandle.USER_CURRENT);
 
+            mQsLayoutColumns = Settings.System.getIntForUser(resolver,
+                    Settings.System.QS_LAYOUT_COLUMNS, 3, mCurrentUserId);
+
             if (mNotificationPanel != null) {
                 mNotificationPanel.updateSettings();
+            }
+
+            if (mHeader != null) {
+                mHeader.updateSettings();
             }
         }
     }
@@ -1071,6 +1067,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         ((BatteryMeterView) mStatusBarView.findViewById(R.id.battery)).setBatteryController(
                 mBatteryController);
+        ((BatteryLevelTextView) mStatusBarView.findViewById(R.id.battery_level))
+                .setBatteryController(mBatteryController);
         mKeyguardStatusBar.setBatteryController(mBatteryController);
 
         PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
