@@ -99,6 +99,10 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
     // DU Logo
     private ImageView mDuLogo;
 
+    // Statusbar weather
+    private TextView mWeatherTextView;
+    private ImageView mWeatherImageView;
+
     private int mIconSize;
     private int mIconHPadding;
 
@@ -173,6 +177,8 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
         mDarkModeIconColorSingleTone = context.getColor(R.color.dark_mode_icon_color_single_tone);
         mLightModeIconColorSingleTone = context.getColor(R.color.light_mode_icon_color_single_tone);
         mHandler = new Handler();
+        mWeatherTextView = (TextView) statusBar.findViewById(R.id.weather_temp);
+        mWeatherImageView = (ImageView) statusBar.findViewById(R.id.weather_image);
         loadDimens();
 
         mClock.setStatusBarIconController(this);
@@ -612,6 +618,8 @@ public class StatusBarIconController extends StatusBarIconList implements Tunabl
         mCarrierLabel.setTextColor(getTint(mTintArea, mCarrierLabel, mIconTint));
         mDuLogo.setImageTintList(ColorStateList.valueOf(mIconTint));
         mBatteryLevelView.setTextColor(getTint(mTintArea, mBatteryLevelView, mIconTint));
+        mWeatherTextView.setTextColor(mIconTint);
+        mWeatherImageView.setImageTintList(ColorStateList.valueOf(mIconTint));
         if (mNotificationTicker != null) mNotificationTicker.setDarkIntensity(mDarkIntensity);
     }
 
