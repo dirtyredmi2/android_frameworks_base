@@ -22,6 +22,14 @@ import android.content.Context;
 import android.content.ContentResolver;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.database.ContentObserver;
+import android.net.Uri;
+import android.os.Handler;
+import android.graphics.Typeface;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.graphics.PorterDuff.Mode;
+import android.provider.AlarmClock;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.text.TextUtils;
@@ -32,11 +40,13 @@ import android.util.Slog;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.GridLayout;
+import android.widget.ImageView;
 import android.widget.TextClock;
 import android.widget.TextView;
 
 import com.android.internal.widget.LockPatternUtils;
 
+import java.util.Date;
 import java.util.Locale;
 
 public class KeyguardStatusView extends GridLayout implements
@@ -283,6 +293,15 @@ public class KeyguardStatusView extends GridLayout implements
         boolean showDate = Settings.Secure.getIntForUser(resolver,
                 Settings.Secure.HIDE_LOCKSCREEN_DATE, 1, UserHandle.USER_CURRENT) == 1;
 
+        mClockView = (TextClock) findViewById(R.id.clock_view);
+        mClockView.setVisibility(showClock ? View.VISIBLE : View.GONE);
+
+        mDateView.setVisibility(showDate ? View.VISIBLE : View.GONE);
+        mDateView = (TextClock) findViewById(R.id.date_view);
+
+        mAlarmStatusView = (TextView) findViewById(R.id.alarm_status);
+        mAlarmStatusView.setVisibility(showAlarm && nextAlarm != null ? View.VISIBLE : View.GONE);
+    }
 
     @Override
     public void weatherUpdated() {
@@ -385,16 +404,6 @@ public class KeyguardStatusView extends GridLayout implements
         if (mWeatherCurrentTemp != null) {
             mWeatherCurrentTemp.setTextColor(primaryTextColor);
         }
-    }
-
-        mClockView = (TextClock) findViewById(R.id.clock_view);
-        mClockView.setVisibility(showClock ? View.VISIBLE : View.GONE);
-
-        mDateView.setVisibility(showDate ? View.VISIBLE : View.GONE);
-        mDateView = (TextClock) findViewById(R.id.date_view);
-
-        mAlarmStatusView = (TextView) findViewById(R.id.alarm_status);
-        mAlarmStatusView.setVisibility(showAlarm && nextAlarm != null ? View.VISIBLE : View.GONE);
     }
 
     // DateFormat.getBestDateTimePattern is extremely expensive, and refresh is called often.
