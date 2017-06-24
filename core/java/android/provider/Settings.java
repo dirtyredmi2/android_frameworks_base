@@ -4560,6 +4560,14 @@ public final class Settings {
          */
         public static final String LOCK_SCREEN_VISIBLE_NOTIFICATIONS = "lock_screen_visible_notifications";
 
+        /**
+         * Whether to answer or silence an incoming call with a swipe action on fingerprint scanner
+         * 0 = don't do anything (default)
+         * 1 = answer call with both swipe up and swipe down actions
+         * 2 = swipe up to answer, swipe down to silence the call
+         * @hide
+         */
+        public static final String FP_SWIPE_CALL_ACTIONS = "fp_swipe_call_actions";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings
@@ -7261,22 +7269,14 @@ public final class Settings {
         public static final String HARDWARE_KEYS_DISABLE = "hardware_keys_disable";
 
         /**
-         * Low brightness level for the advanced night mode tile
+         * Whether to set a lower brightness level when enabling night mode
+         * 0: Disabled
+         * 1: Set the brightness to a very low value
+         * 2: Set the brightness to a low value
+         * 3: Set the brightness to a medium value
          * @hide
          */
-        public static final String QS_NIGHT_BRIGHTNESS_VALUE = "qs_night_brightness_value";
-
-        /**
-         * Allows to store the custom user auto brightness value
-         * @hide
-         */
-        public static final String NIGHT_AUTOBRIGHTNESS_USERVALUE = "night_autobrightness_uservalue";
-
-        /**
-         * Allows to store the custom user manual brightness value
-         * @hide
-         */
-        public static final String NIGHT_MANBRIGHTNESS_USERVALUE = "night_manbrightness_uservalue";
+        public static final String NIGHT_BRIGHTNESS_VALUE = "night_brightness_value";
 
         /**
          * Whether the device should pulse on pick up gesture.
